@@ -1,5 +1,5 @@
 FROM maven:3.3.3-jdk-8 
-MAINTAINER Anthony Dahanne <anthony.dahanne@gmail.com>
+MAINTAINER Dennis Tait <dennis.tait@nanitesoftware.co.uk>
 
 # tomcat stuff copied from https://github.com/docker-library/tomcat/blob/e36c4044b7ece1361f124aaf3560c2efd888b62f/8-jre8/Dockerfile
 
@@ -38,7 +38,6 @@ RUN set -x \
 
 EXPOSE 8080
 CMD ["catalina.sh", "run"]
-
 # end of tomcat stuff
 
 # build and add the war
@@ -53,21 +52,10 @@ RUN cd /usr/src/app/ \
   && ls -la  \
   && unzip -o master.zip \
   && cd spring-petclinic-master \
-  #&& mvn clean install package -DskipTests \
   && mvn clean compile war:war -DskipTests \
   && ls -la target \
   && cp target/spring-petclinic*.war /usr/local/tomcat/webapps/petclinic.war \
   && rm -rf target/
-
-#ENV SPRING_PETCLINIC_WAR http://192.168.1.116:8080/job/spring-petclinic/ws/target/petclinic.war
-#RUN cd /usr/src/app/ \
-#  && rm -rf spring-petclinic.war \
-#  #&& curl -fSL "SPRING_PETCLINIC_WAR" -o petclinic.war \
-#  && wget http://192.168.1.116:8080/job/spring-petclinic/ws/target/petclinic.war > /dev/null 2>&1 \
-#  && pwd \
-#  && ls -la  \
-#  && ls -la /usr/local/tomcat \
-#  && cp petclinic.war /usr/local/tomcat/webapps \
 
 # have the war deployed to a volume, not the container union filesystem
 #VOLUME /tmp/local/tomcat/webapps

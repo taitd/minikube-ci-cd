@@ -22,6 +22,6 @@ node {
 
     stage "Deploy"
 
-        echo "sed 's#127.0.0.1:30400/spring-petclinic:latest#'$BUILDIMG'#' applications/spring-petclinic/k8s/deployment.yaml | kubectl apply -f -"
-        echo "kubectl rollout status deployment/spring-petclinic"
+        sh "sed 's#127.0.0.1:30400/spring-petclinic:latest#'$BUILDIMG'#' applications/spring-petclinic/k8s/deployment.yaml | kubectl apply -f -"
+        sh "kubectl rollout status deployment/spring-petclinic"
 }
