@@ -57,7 +57,7 @@ RUN cd /usr/src/app/ \
   && cp target/spring-petclinic*.war /usr/local/tomcat/webapps/petclinic.war \
   && rm -rf target/ \
   && ls -la /usr/local/tomcat/webapps \
-  && ls -la /usr/local/tomcat/webapps/petclinic/WEB-INF/lib
+  #&& ls -la /usr/local/tomcat/webapps/petclinic/WEB-INF/lib
 
 # have the war deployed to a volume, not the container union filesystem
 #VOLUME /tmp/local/tomcat/webapps
