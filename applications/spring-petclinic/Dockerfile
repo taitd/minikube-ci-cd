@@ -52,14 +52,15 @@ RUN cd /usr/src/app/ \
   && ls -la  \
   && unzip -o master.zip \
   && cd spring-petclinic-master \
-  && echo "<role rolename="manager-gui"/>" >> conf/tomcat-users.xml \
-  && echo "<user username="admin" password="<admin>" roles="manager-gui"/>" >> conf/tomcat-users.xml \
   && mvn clean install war:war -DskipTests \
   && ls -la target \
   && cp target/spring-petclinic*.war /usr/local/tomcat/webapps/petclinic.war \
   && rm -rf target/ \
   && ls -la /usr/local/tomcat/webapps \
-  #&& ls -la /usr/local/tomcat/webapps/petclinic/WEB-INF/lib
+  && ls -la /usr/local/tomcat/webapps/petclinic \
+  && echo "<role rolename="manager-gui"/>" >> /usr/local/tomcat/webapps/petclinic/conf/tomcat-users.xml \
+  && echo "<user username="admin" password="<admin>" roles="manager-gui"/>" >> /usr/local/tomcat/webapps/petclinic/conf/tomcat-users.xml \
+  && cat /usr/local/tomcat/webapps/petclinic/conf/tomcat-users.xml
 
 # have the war deployed to a volume, not the container union filesystem
 #VOLUME /tmp/local/tomcat/webapps
