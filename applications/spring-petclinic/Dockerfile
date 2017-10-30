@@ -52,11 +52,12 @@ RUN cd /usr/src/app/ \
   && ls -la  \
   && unzip -o master.zip \
   && cd spring-petclinic-master \
-  && mvn clean compile war:war -DskipTests \
+  && mvn clean install war:war -DskipTests \
   && ls -la target \
   && cp target/spring-petclinic*.war /usr/local/tomcat/webapps/petclinic.war \
   && rm -rf target/ \
-  && ls -la /usr/local/tomcat/webapps
+  && ls -la /usr/local/tomcat/webapps \
+  && ls -la /usr/local/tomcat/webapps/petclinic/WEB-INF/lib
 
 # have the war deployed to a volume, not the container union filesystem
 #VOLUME /tmp/local/tomcat/webapps
