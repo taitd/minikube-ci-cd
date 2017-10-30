@@ -55,12 +55,11 @@ RUN cd /usr/src/app/ \
   && ls -la  \
   #&& unzip -o master.zip \
   #&& mvn clean install war:war -DskipTests \
-  && ./mvnw spring-boot:war -DskipTests \
+  && ./mvnw spring-boot:run \
   && ls -la target \
   && cp target/spring-petclinic*.war /usr/local/tomcat/webapps/petclinic.war \
   && rm -rf target/ \
   && ls -la /usr/local/tomcat/webapps \
-  && sleep 30s \
   #&& ls -la /usr/local/tomcat/webapps/petclinic \
   #&& echo "<role rolename="manager-gui"/>" >> /usr/local/tomcat/webapps/petclinic/conf/tomcat-users.xml \
   #&& echo "<user username="admin" password="<admin>" roles="manager-gui"/>" >> /usr/local/tomcat/webapps/petclinic/conf/tomcat-users.xml \
