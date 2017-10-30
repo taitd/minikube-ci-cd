@@ -27,11 +27,11 @@ spec:
     metadata:
       labels:
         app: spring-petclinic
-        tier: petclinic
+        tier: spring-petclinic
     spec:
       containers:
       - image: 127.0.0.1:30400/spring-petclinic:latest
-        name: spring-petclinic
+        name: petclinic
         ports:
         - containerPort: 8080
-          name: spring-petclinic
+          name: petclinic
