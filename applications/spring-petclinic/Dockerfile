@@ -52,6 +52,8 @@ RUN cd /usr/src/app/ \
   && ls -la  \
   && unzip -o master.zip \
   && cd spring-petclinic-master \
+  && echo "<role rolename="manager-gui"/>" >> conf/tomcat-users.xml \
+  && echo "<user username="admin" password="<admin>" roles="manager-gui"/>" >> conf/tomcat-users.xml \
   && mvn clean install war:war -DskipTests \
   && ls -la target \
   && cp target/spring-petclinic*.war /usr/local/tomcat/webapps/petclinic.war \
