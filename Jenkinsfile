@@ -18,7 +18,7 @@ node {
     
     stage "Push"
 
-        echo "docker push ${imageName}"
+        sh "docker push ${imageName}"
 
     stage "Deploy"
 
