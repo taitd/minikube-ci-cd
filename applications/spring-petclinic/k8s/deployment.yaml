@@ -26,8 +26,8 @@ spec:
   template:
     metadata:
       labels:
-        app: petclinic
-        tier: spring-petclinic
+        app: spring-petclinic
+        tier: petclinic
     spec:
       containers:
       - image: 127.0.0.1:30400/spring-petclinic:latest
