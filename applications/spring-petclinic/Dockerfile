@@ -55,7 +55,8 @@ RUN cd /usr/src/app/ \
   && ls -la  \
   #&& unzip -o master.zip \
   #&& mvn clean install war:war -DskipTests \
-  && ./mvnw spring-boot:run \
+  #&& ./mvnw spring-boot:run \
+  && ./mvnw clean install war:war -DskipTests \
   && ls -la target \
   && cp target/spring-petclinic*.war /usr/local/tomcat/webapps/petclinic.war \
   && rm -rf target/ \
