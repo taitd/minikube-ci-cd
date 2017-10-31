@@ -46,25 +46,25 @@ COPY . /usr/src/app/
 ENV SPRING_PETCLINIC https://github.com/spring-projects/spring-petclinic/archive/master.zip
 # tests are ignored since they rely on a mysql database now...
 RUN cd /usr/src/app/ \
-  && rm -rf master.zip \
-  #&& wget https://github.com/spring-projects/spring-petclinic/archive/master.zip \
   && git clone https://github.com/spring-projects/spring-petclinic.git \
-  #&& cd spring-petclinic-master \
   && cd spring-petclinic \
   && pwd \
   && ls -la  \
-  #&& unzip -o master.zip \
   #&& mvn clean install war:war -DskipTests \
   #&& ./mvnw spring-boot:run \
   && ./mvnw clean install war:war -DskipTests \
+  && pwd \
   && ls -la target \
   && cp target/spring-petclinic*.war /usr/local/tomcat/webapps/petclinic.war \
   && rm -rf target/ \
+  && pwd \
   && ls -la /usr/local/tomcat/webapps \
-  #&& ls -la /usr/local/tomcat/webapps/petclinic \
-  #&& echo "<role rolename="manager-gui"/>" >> /usr/local/tomcat/webapps/petclinic/conf/tomcat-users.xml \
-  #&& echo "<user username="admin" password="<admin>" roles="manager-gui"/>" >> /usr/local/tomcat/webapps/petclinic/conf/tomcat-users.xml \
-  #&& cat /usr/local/tomcat/webapps/petclinic/conf/tomcat-users.xml
+  && cd /usr/local/tomcat/conf \
+  && pwd \
+  && ls -la  \
+  && echo "<role rolename="manager-gui"/>" >> tomcat-users.xml \
+  && echo "<user username="admin" password="<admin>" roles="manager-gui"/>" >> tomcat-users.xml \
+  && cat tomcat-users.xml
 
 # have the war deployed to a volume, not the container union filesystem
 #VOLUME /tmp/local/tomcat/webapps
