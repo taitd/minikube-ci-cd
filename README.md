@@ -1,29 +1,3 @@
-
-minikube stop
-Stopping local Kubernetes cluster...
-Machine stopped.
-
-Clear out Minikube
-Let’s get rid of the leftovers from any previous experiments you might have conducted with Minikube. Enter the following terminal command:
-
-minikube delete; sudo rm -rf ~/.minikube; sudo rm -rf ~/.kube
-Deleting local Kubernetes cluster...
-Machine deleted.
-
-1. Start up the Kubernetes cluster with Minikube, giving it some extra resources.
-minikube start --memory 8000 --cpus 2 
-
-docker stop socat-registry; docker rm socat-registry 
-docker run -d -e "REGIP=`minikube ip`" --name socat-registry -p 30400:5000 chadmoon/socat:latest bash -c "socat TCP4-LISTEN:5000,fork,reuseaddr TCP4:`minikube ip`:30400"
-
-kubectl apply -f manifests/jenkins.yml 
-kubectl rollout status deployment/jenkins
-minikube service jenkins
-kubectl exec -it `kubectl get pods --selector=app=jenkins --output=jsonpath={.items..metadata.name}` cat /root/.jenkins/secrets/initialAdminPassword
-
-#https://hub.docker.com/r/anthonydahanne/spring-petclinic/~/dockerfile/
-docker build -t 127.0.0.1:30400/spring-petclinic:latest -f applications/spring-petclinic/Dockerfile applications/spring-petclinic
-docker push 127.0.0.1:30400/spring-petclinic
 -------------
 # Minikube CI/CD
 
@@ -32,317 +6,228 @@ It also features Sonarqube, Artifactory and Jenkins running on its own a contain
 
 To get it up and running, simply follow the directions below. 
 
-#### Step1
-
-Start up the Kubernetes cluster with Minikube, giving it some extra resources.
+#### 1
 
 `minikube start --memory 8000 --cpus 2 --kubernetes-version v1.8.0`
 
-#### Step2
-
-
-#### Step3
+#### 2
 
 Wait 20 seconds, and then view the Minikube Dashboard, a web UI for managing deployments.
 
 `sleep 20; minikube service kubernetes-dashboard --namespace kube-system`
 
-#### Step4
+#### 3
 
 Deploy the public nginx image from DockerHub into a pod. Nginx is an open source web server that will automatically download from Docker Hub if it’s not available locally.
 
 `kubectl run nginx --image nginx --port 80`
 
-#### Step5
+#### 4
 
 Create a service for deployment. This will expose the nginx pod so you can access it with a web browser.
 
 `kubectl expose deployment nginx --type NodePort --port 80`
 
-#### Step6
+#### 5
 
 Launch a web browser to test the service. The nginx welcome page displays, which means the service is up and running.
 
 `minikube service nginx`
 
-#### Step7
+#### 6
 
 Set up the cluster registry by applying a .yml manifest file.
 
 `kubectl apply -f manifests/registry.yml`
 
-#### Step8
+#### 7
 
 Wait for the registry to finish deploying. Note that this may take several minutes.
 
 `kubectl rollout status deployments/registry`
 
-#### Step9
+#### 8
 
 View the registry user interface in a web browser.
 
 `minikube service registry-ui`
 
-#### Step10
-
-#### Step11
+#### 9
 
 Now let’s build an image, giving it a special name that points to our local cluster registry.
 
  docker build -t 127.0.0.1:30400/spring-petclinic:latest -f applications/spring-petclinic/Dockerfile applications/spring-petclinic
 
-#### Step12
+#### 10
 
 We’ve built the image, but before we can push it to the registry, we need to set up a temporary proxy. By default the Docker client can only push to HTTP (not HTTPS) via localhost. To work around this, we’ll set up a container that listens on 127.0.0.1:30400 and forwards to our cluster.
 
-`docker stop socat-registry; docker rm socat-registry; docker run -d -e "REGIP=`minikube ip`" --name socat-registry -p 30400:5000 chadmoon/socat:latest bash -c "socat TCP4-LISTEN:5000,fork,reuseaddr TCP4:`minikube ip`:30400"`
-
-#### Step13
+ docker stop socat-registry; docker rm socat-registry; docker run -d -e "REGIP=`minikube ip`" --name socat-registry -p 30400:5000 chadmoon/socat:latest bash -c "socat TCP4-LISTEN:5000,fork,reuseaddr TCP4:`minikube ip`:30400"
 
 With our proxy container up and running, we can now push our image to the local repository.
 
  docker push 127.0.0.1:30400/spring-petclinic
 
-#### Step14
+#### 11
 
 The proxy’s work is done, so you can go ahead and stop it.
 
 `docker stop socat-registry;`
 
-#### Step15
-
-#### Step16
-
-## Part 2
-
-#### Step1
+#### 12
 
 Install Jenkins, which we’ll use to create our automated CI/CD pipeline. It will take the pod a minute or two to roll out.
 
 `kubectl apply -f manifests/jenkins.yml; kubectl rollout status deployment/jenkins`
 
-#### Step2
+#### 13
 
 Open the Jenkins UI in a web browser.
 
 `minikube service jenkins`
 
-#### Step3
+#### 14
 
 Display the Jenkins admin password with the following command, and right-click to copy it. IMPORTANT: BE CAREFUL NOT TO PRESS CTRL-C TO COPY THE PASSWORD AS THIS WILL STOP THE SCRIPT.
 
 `kubectl exec -it `kubectl get pods --selector=app=jenkins --output=jsonpath={.items..metadata.name}` cat /root/.jenkins/secrets/initialAdminPassword`
 
-#### Step4
+#### 15
 
 Switch back to the Jenkins UI. Paste the Jenkins admin password in the box and click Continue. Click Install suggested plugins and wait for the process to complete.
 
 `echo ''`
 
-#### Step5
+#### 16
 
 Create an admin user and credentials, and click Save and Finish. (Make sure to remember these credentials as you will need them for repeated logins.) Click Start using Jenkins.
 
 `echo ''`
 
-#### Step6
+#### 17
 
 We now want to create a new pipeline for use with our Hello-Kenzan app. On the left, click New Item. Enter the item name as "Hello-Kenzan Pipeline", select Pipeline, and click OK.
 
 `echo ''`
 
-#### Step7
+#### 18
 
 Under the Pipeline section at the bottom, change the Definition to be "Pipeline script from SCM".
 
 `echo ''`
 
-#### Step8
+#### 19
 
 Change the SCM to Git.
 
 `echo ''`
 
-#### Step9
+#### 20
 
 Change the Repository URL to be the URL of your forked Git repository, such as https://github.com/[GIT USERNAME]/minikube-ci-cd. Click Save. On the left, click Build Now to run the new pipeline.
 
 `echo ''`
 
-#### Step10
-
-
-#### Step11
-
-
-## Part 3
-
-#### Step1
-
-
-#### Step2
-
-
-#### Step3
-
-
-#### Step4
-
-The crossword application is a multi-tier application whose services depend on each other. We will create three services in Kubernetes ahead of time, so that the deployments are aware of them.
-
-#### Step6
+#### 21
 
 Set up a proxy so we can push the spring-petclinic Docker image we just built to our cluster's registry.
 
 `docker stop socat-registry; docker rm socat-registry; docker run -d -e "REGIP=`minikube ip`" --name socat-registry -p 30400:5000 chadmoon/socat:latest bash -c "socat TCP4-LISTEN:5000,fork,reuseaddr TCP4:`minikube ip`:30400"`
 
-#### Step7
+#### 22
 
 Push the spring-petclinic image to the registry.
 
 `docker push 127.0.0.1:30400/spring-petclinic:`git rev-parse --short HEAD``
 
-#### Step8
+#### 23
 
 The proxy’s work is done, so go ahead and stop it.
 
 `docker stop socat-registry`
 
-#### Step9
+#### 24
 
 Open the registry UI and verify that the spring-petclinic image is in our local registry.
 
 `minikube service registry-ui`
 
-#### Step10
+#### 25
 
 Create the spring-petclinic deployment and service.
 
 `sed 's#127.0.0.1:30400/spring-petclinic:latest#127.0.0.1:30400/spring-petclinic:'`git rev-parse --short HEAD`'#' applications/spring-petclinic/k8s/deployment.yaml | kubectl apply -f -`
 
-#### Step11
+#### 26
 
 Wait for the spring-petclinic deployment to finish.
 
 `kubectl rollout status deployment/spring-petclinic`
 
-#### Step12
+#### 27
 
 View pods to see the spring-petclinic pod running.
 
 `kubectl get pods`
 
-#### Step13
+#### 28
 
 View services to see the spring-petclinic service.
 
 `kubectl get services`
 
-#### Step14
+#### 29
 
 View ingress rules to see the spring-petclinic ingress rule.
 
 `kubectl get ingress`
 
-#### Step15
+#### 30
 
 View deployments to see the spring-petclinic deployment.
 
 `kubectl get deployments`
 
-#### Step16
-
-We will run a script to bootstrap the puzzle and mongo services, creating Docker images and storing them in the local registry. The puzzle.sh script runs through the same build, proxy, push, and deploy steps we just ran through manually for both services.
-
-`scripts/puzzle.sh`
-
-#### Step17
-
-Check to see if the puzzle and mongo services have been deployed.
-
-`kubectl rollout status deployment/puzzle`
-
-#### Step18
-
-Bootstrap the kr8sswordz frontend web application. This script follows the same build proxy, push, and deploy steps that the other services followed.
-
-`scripts/kr8sswordz-pages.sh`
-
-#### Step19
+#### 31
 
 Check to see if the frontend has been deployed.
 
-`kubectl rollout status deployment/kr8sswordz`
+`kubectl rollout status deployment/spring-petclinic`
 
-#### Step20
+#### 32
 
 Check out all the pods that are running.
 
 `kubectl get pods`
 
-#### Step21
-
-Start the web application in your default browser. You may have to refresh your browser so that the puzzle appears properly.
-
-`minikube service kr8sswordz`
-
-## Part 4
-
-#### Step1
+#### 33
 
 Enter the following command to open the Jenkins UI in a web browser. Log in to Jenkins using the username and password you previously set up.
 
 `minikube service jenkins`
 
-#### Step2
+#### 34
 
-We’ll want to create a new pipeline for the puzzle service that we previously deployed. On the left in Jenkins, click New Item.
-
-`echo ''`
-
-#### Step3
-
-Enter the item name as "Puzzle-Service", click Pipeline, and click OK.
+We’ll want to create a new pipeline for the spring-petclinic service that we previously deployed. On the left in Jenkins, click New Item.
 
 `echo ''`
 
-#### Step4
+#### 35
+
+Enter the item name as "spring-petclinic", click Pipeline, and click OK.
+
+`echo ''`
+
+#### 36
 
 Under the Build Triggers section, select Poll SCM. For the Schedule, enter the the string H/5 * * * * which will poll the Git repo every 5 minutes for changes.
 
 `echo ''`
 
-#### Step5
+#### 37
 
-In the Pipeline section, change the Definition to "Pipeline script from SCM". Set the SCM property to GIT. Set the Repository URL to your forked repo (created in Part 2), such as https://github.com/[GIT USERNAME]/kubernetes-ci-cd.git. Set the Script Path to applications/puzzle/Jenkinsfile
+In the Pipeline section, change the Definition to "Pipeline script from SCM". Set the SCM property to GIT. Set the Repository URL to your forked repo (created earlier), such as https://github.com/[GIT USERNAME]/minikube-ci-cd.git. Set the Script Path to applications/puzzle/Jenkinsfile
 
-`echo ''`
-
-#### Step6
-
-When you are finished, click Save. On the left, click Build Now to run the new pipeline. You should see it successfully run through the build, push, and deploy steps in a few minutes.
-
-`echo ''`
-
-#### Step7
-
-View the Kr8sswordz application.
-
-`minikube service kr8sswordz`
-
-#### Step8
-
-Spin up several instances of the puzzle service by moving the slider to the right and clicking Scale. For reference, click on the Submit button, noting that the green hit does not register on the puzzle services.
-
-`echo ''`
-
-#### Step9
-
-Edit applications/puzzle/common/models/crossword.js in your favorite text editor (for example, you can use nano by running the command 'nano applications/puzzle/common/models/crossword.js' in a separate terminal). You'll see a commented section on lines 42-43 that indicates to uncomment a specific line. Uncomment line 43 by deleting the forward slashes and save the file. 
-
-`echo ''`
-
-#### Step10
 
 Commit and push the change to your forked Git repo.
 
@@ -350,24 +235,10 @@ Commit and push the change to your forked Git repo.
 
 #### Step11
 
-In Jenkins, open up the Puzzle-Service pipeline and wait until it triggers a build. It should trigger every 5 minutes.
-
-`echo ''`
-
-#### Step12
-
-After it triggers, observe how the puzzle services disappear in the Kr8sswordz Puzzle app, and how new ones take their place.
-
-`echo ''`
-
-#### Step13
-
-Try clicking Submit to test that hits now register as light green.
-
-`echo ''`
+In Jenkins, open up the spring-petstore pipeline and wait until it triggers a build. It should trigger every 5 minutes.
 
  ## LICENSE
-Copyright 2017 Kenzan, LLC <http://kenzan.com>
+Copyright 2017 Nanite Software Ltd, LLC <http://nanitesoftware.co.uk>
  
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
