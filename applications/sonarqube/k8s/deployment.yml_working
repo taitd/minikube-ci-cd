@@ -1,0 +1,76 @@
+kind: PersistentVolume
+apiVersion: v1
+metadata:
+  name: sonarqube
+  labels:
+    type: local
+spec:
+  capacity:
+    storage: 2Gi
+  accessModes:
+    - ReadWriteOnce
+  hostPath:
+    path: "/data/sonarqube/"
+
+---
+kind: PersistentVolumeClaim
+apiVersion: v1
+metadata:
+  name: sonarqube-claim
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 2Gi
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: sonarqube
+  labels:
+    app: sonarqube
+spec:
+  ports:
+    - port: 80
+      targetPort: 9000
+  selector:
+    app: sonarqube
+    tier: sonarqube
+  type: NodePort
+---
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  name: sonarqube
+  labels:
+    app: sonarqube
+spec:
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      labels:
+        app: sonarqube
+        tier: sonarqube
+    spec:
+      containers:
+      - image: taitd/sonarqube:latest
+        name: sonarqube
+        securityContext:
+          privileged: true
+        ports:
+        - containerPort: 9000
+          name: sonarqube
+        volumeMounts:
+        - name: sonarqube-persistent-storage
+          mountPath: /root/.sonarqube
+        - name: docker
+          mountPath: /var/run/docker.sock
+      volumes:
+      - name: docker
+        hostPath:
+          path: /var/run/docker.sock
+      - name: sonarqube-persistent-storage
+        persistentVolumeClaim:
+          claimName: sonarqube-claim
