@@ -28,7 +28,7 @@ node {
         echo "docker push ${imageNameOracleJava}"
 
     stage "Deploy oracle java"
-        echo "sed 's#127.0.0.1:30400/docker-oracle-java:latest#'$BUILDIMGOracleJava'#' applications/docker-oracle-java/k8s/deployment.yml | kubectl apply -f -"
+        echo "sed 's#127.0.0.1:30400/docker-oracle-java:latest#'$BUILDIMGOracelJava'#' applications/docker-oracle-java/k8s/deployment.yml | kubectl apply -f -"
         echo "kubectl rollout status deployment/docker-oracle-java"
 
     stage "Build Docker sonarqube"
