@@ -17,21 +17,48 @@ node {
     imageNameSonarqube = "${registryHost}${appNameSonarqube}:${tag}"
     imageNameArtifactory = "${registryHost}${appNameArtifactory}:${tag}"
     env.BUILDIMG=imageName
-    env.BUILDIMG=imageNameOracleJava
-    env.BUILDIMG=imageNameSonarqube
-    env.BUILDIMG=imageNameArtifactory
+    env.BUILDIMGOracelJava=imageNameOracleJava
+    env.BUILDIMGSonarqube=imageNameSonarqube
+    env.BUILDIMGArtifactory=imageNameArtifactory
 
     stage "Build Docker oracle java"
     
-        sh  "docker build -t ${imageName} -f applications/docker-oracle-java/Dockerfile applications/docker-oracle-java"
+        sh  "docker build -t ${imageNameOracleJava} -f applications/docker-oracle-java/Dockerfile applications/docker-oracle-java"
+    
+    stage "Push oracle java"
+
+        sh "docker push ${imageNameOracleJava}"
+
+    stage "Deploy oracle java"
+
+        sh "sed 's#127.0.0.1:30400/docker-oracle-java:latest#'$BUILDIMGOracleJava'#' applications/docker-oracle-java/k8s/deployment.yml | kubectl apply -f -"
+        sh "kubectl rollout status deployment/docker-oracle-java"
 
     stage "Build Docker sonarqube"
     
-        sh  "docker build -t ${imageName} -f applications/sonarqube/Dockerfile applications/sonarqube"
+        sh  "docker build -t ${imageNameSonarqube} -f applications/sonarqube/Dockerfile applications/sonarqube"
+    
+    stage "Push sonarqube"
+
+        sh "docker push ${imageNameSonarqube}"
+
+    stage "Deploy sonarqube"
+
+        sh "sed 's#127.0.0.1:30400/sonarqube:latest#'$BUILDIMGSonarqube'#' applications/sonarqube/k8s/deployment.yml | kubectl apply -f -"
+        sh "kubectl rollout status deployment/sonarqube"
 
     stage "Build Docker artifactory"
     
-        sh  "docker build -t ${imageName} -f applications/artifactory/Dockerfile applications/artifactory"
+        sh  "docker build -t ${imageNameArtifactory} -f applications/artifactory/Dockerfile applications/artifactory"
+    
+    stage "Push artifactory"
+
+        sh "docker push ${imageNameArtifactory}"
+
+    stage "Deploy artifactory"
+
+        sh "sed 's#127.0.0.1:30400/artifactory:latest#'$BUILDIMGArtifactory'#' applications/arifactory/k8s/deployment.yaml | kubectl apply -f -"
+        sh "kubectl rollout status deployment/artifactory"
 
     stage "Build application"
     
