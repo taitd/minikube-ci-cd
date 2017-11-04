@@ -8,11 +8,25 @@ node {
 
     tag = readFile('commit-id').replace("\n", "").replace("\r", "")
     appName = "spring-petclinic"
+    appNameSonarqube = "sonarqube"
+    appNameArtifactory = "artifactory"
     registryHost = "127.0.0.1:30400/"
     imageName = "${registryHost}${appName}:${tag}"
+    imageNameSonarqube = "${registryHost}${appNameSonraqube}:${tag}"
+    imageNameArtifactory = "${registryHost}${appNameArtifactory}:${tag}"
     env.BUILDIMG=imageName
+    env.BUILDIMG=imageNameSonarqube
+    env.BUILDIMG=imageNameArtifactory
 
-    stage "Build"
+    stage "Build Docker sonarqube"
+    
+        sh  "docker build -t ${imageName} -f applications/sonarqube/Dockerfile applications/sonarqube"
+
+    stage "Build Docker artifactory"
+    
+        sh  "docker build -t ${imageName} -f applications/artifactory/Dockerfile applications/artifactory"
+
+    stage "Build application"
     
         sh  "docker build -t ${imageName} -f applications/spring-petclinic/Dockerfile applications/spring-petclinic"
     
