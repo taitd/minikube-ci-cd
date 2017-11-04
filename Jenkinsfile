@@ -52,7 +52,7 @@ node {
         echo "kubectl rollout status deployment/artifactory"
 
     stage "Build application"
-        echo  "docker build -t ${imageName} -f applications/spring-petclinic/Dockerfile applications/spring-petclinic"
+        sh  "docker build -t ${imageName} -f applications/spring-petclinic/Dockerfile applications/spring-petclinic"
     
     stage "Push application"
         sh "docker push ${imageName}"
