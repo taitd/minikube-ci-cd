@@ -13,7 +13,7 @@ node {
     appNameArtifactory = "artifactory"
     registryHost = "127.0.0.1:30400/"
     imageName = "${registryHost}${appName}:${tag}"
-    imageNameSonarqube = "${registryHost}${appNameOracleJava}:${tag}"
+    imageNameOracleJava = "${registryHost}${appNameOracleJava}:${tag}"
     imageNameSonarqube = "${registryHost}${appNameSonarqube}:${tag}"
     imageNameArtifactory = "${registryHost}${appNameArtifactory}:${tag}"
     env.BUILDIMG=imageName
