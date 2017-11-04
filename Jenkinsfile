@@ -22,53 +22,42 @@ node {
     env.BUILDIMGArtifactory=imageNameArtifactory
 
     stage "Build Docker oracle java"
-    
-        sh  "docker build -t ${imageNameOracleJava} -f applications/docker-oracle-java/Dockerfile applications/docker-oracle-java"
+        echo  "docker build -t ${imageNameOracleJava} -f applications/docker-oracle-java/Dockerfile applications/docker-oracle-java"
     
     stage "Push oracle java"
-
-        sh "docker push ${imageNameOracleJava}"
+        echo "docker push ${imageNameOracleJava}"
 
     stage "Deploy oracle java"
-
-        sh "sed 's#127.0.0.1:30400/docker-oracle-java:latest#'$BUILDIMGOracleJava'#' applications/docker-oracle-java/k8s/deployment.yml | kubectl apply -f -"
-        sh "kubectl rollout status deployment/docker-oracle-java"
+        echo "sed 's#127.0.0.1:30400/docker-oracle-java:latest#'$BUILDIMGOracleJava'#' applications/docker-oracle-java/k8s/deployment.yml | kubectl apply -f -"
+        echo "kubectl rollout status deployment/docker-oracle-java"
 
     stage "Build Docker sonarqube"
-    
-        sh  "docker build -t ${imageNameSonarqube} -f applications/sonarqube/Dockerfile applications/sonarqube"
+        echo  "docker build -t ${imageNameSonarqube} -f applications/sonarqube/Dockerfile applications/sonarqube"
     
     stage "Push sonarqube"
-
-        sh "docker push ${imageNameSonarqube}"
+        echo "docker push ${imageNameSonarqube}"
 
     stage "Deploy sonarqube"
-
-        sh "sed 's#127.0.0.1:30400/sonarqube:latest#'$BUILDIMGSonarqube'#' applications/sonarqube/k8s/deployment.yml | kubectl apply -f -"
-        sh "kubectl rollout status deployment/sonarqube"
+        echo "sed 's#127.0.0.1:30400/sonarqube:latest#'$BUILDIMGSonarqube'#' applications/sonarqube/k8s/deployment.yml | kubectl apply -f -"
+        echo "kubectl rollout status deployment/sonarqube"
 
     stage "Build Docker artifactory"
-    
-        sh  "docker build -t ${imageNameArtifactory} -f applications/artifactory/Dockerfile applications/artifactory"
+        echo  "docker build -t ${imageNameArtifactory} -f applications/artifactory/Dockerfile applications/artifactory"
     
     stage "Push artifactory"
-
-        sh "docker push ${imageNameArtifactory}"
+        echo "docker push ${imageNameArtifactory}"
 
     stage "Deploy artifactory"
-
-        sh "sed 's#127.0.0.1:30400/artifactory:latest#'$BUILDIMGArtifactory'#' applications/arifactory/k8s/deployment.yaml | kubectl apply -f -"
-        sh "kubectl rollout status deployment/artifactory"
+        echo "sed 's#127.0.0.1:30400/artifactory:latest#'$BUILDIMGArtifactory'#' applications/arifactory/k8s/deployment.yaml | kubectl apply -f -"
+        echo "kubectl rollout status deployment/artifactory"
 
     stage "Build application"
+        echo  "docker build -t ${imageName} -f applications/spring-petclinic/Dockerfile applications/spring-petclinic"
     
-        sh  "docker build -t ${imageName} -f applications/spring-petclinic/Dockerfile applications/spring-petclinic"
-    
-    stage "Push"
-
+    stage "Push application"
         sh "docker push ${imageName}"
 
-    stage "Deploy"
+    stage "Deploy application"
 
         sh "sed 's#127.0.0.1:30400/spring-petclinic:latest#'$BUILDIMG'#' applications/spring-petclinic/k8s/deployment.yaml | kubectl apply -f -"
         sh "kubectl rollout status deployment/spring-petclinic"
