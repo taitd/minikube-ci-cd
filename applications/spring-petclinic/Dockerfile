@@ -63,7 +63,7 @@ RUN cd /usr/src/app/ \
   && pwd \
   && ls -la  \
   && echo "<role rolename='manager-gui'/>" >> tomcat-users.xml \
-  && echo "<user username='admin' password='<admin>' roles='manager-gui'/>" >> tomcat-users.xml \
+  && echo "<user username='admin' password='admim' roles='manager-gui'/>" >> tomcat-users.xml \
   && cat tomcat-users.xml
 
 # have the war deployed to a volume, not the container union filesystem
